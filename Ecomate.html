@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoRecycle — E-Waste Management System</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --green: #00c16a;
+            --green-dark: #008f4c;
+            --lime: #b8f04a;
+            --bg: #0a0f0d;
+            --card: #111a14;
+            --border: #1d2e22;
+            --text: #e6f0e9;
+            --muted: #6b8a70;
+            --white: #ffffff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ─── NOISE OVERLAY ─────────────────────────────── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: .4;
+        }
+
+        /* ─── NAV ───────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 4rem;
+            background: rgba(10, 15, 13, .85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: .9rem;
+            font-weight: 500;
+            transition: color .2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--green);
+        }
+
+        .nav-cta {
+            background: var(--green);
+            color: var(--bg);
+            padding: .55rem 1.4rem;
+            border-radius: 100px;
+            font-size: .85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background .2s, transform .15s;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .nav-cta:hover {
+            background: var(--lime);
+            transform: scale(1.03);
+        }
+
+        /* ─── HERO ──────────────────────────────────────── */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 193, 106, .12) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            background: rgba(0, 193, 106, .1);
+            border: 1px solid rgba(0, 193, 106, .25);
+            padding: .4rem 1rem;
+            border-radius: 100px;
+            font-size: .8rem;
+            color: var(--green);
+            margin-bottom: 1.8rem;
+            letter-spacing: .05em;
+        }
+
+        .hero-badge::before {
+            content: '●';
+            font-size: .55rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .3
+            }
+        }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(3rem, 7vw, 6.5rem);
+            font-weight: 800;
+            line-height: 1.0;
+            letter-spacing: -3px;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 .accent {
+            color: var(--green);
+        }
+
+        h1 .accent-lime {
+            color: var(--lime);
+        }
+
+        .hero-sub {
+            max-width: 580px;
+            color: var(--muted);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: var(--bg);
+            padding: .85rem 2.2rem;
+            border-radius: 100px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+            text-decoration: none;
+            transition: background .2s, transform .15s;
+        }
+
+        .btn-primary:hover {
+            background: var(--lime);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            padding: .85rem 2.2rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+            text-decoration: none;
+            transition: border-color .2s, transform .15s;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--green);
+            color: var(--green);
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 5rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        .stat-label {
+            font-size: .8rem;
+            color: var(--muted);
+            margin-top: .2rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        /* ─── SECTION SHARED ────────────────────────────── */
+        section {
+            padding: 7rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .sec-label {
+            font-size: .75rem;
+            color: var(--green);
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            margin-bottom: .8rem;
+            font-weight: 600;
+        }
+
+        .sec-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 1rem;
+        }
+
+        .sec-desc {
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.75;
+            max-width: 560px;
+        }
+
+        /* ─── PROBLEMS ──────────────────────────────────── */
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3.5rem;
+        }
+
+        .prob-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.8rem;
+            transition: border-color .25s, transform .25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prob-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--green), transparent);
+            opacity: 0;
+            transition: opacity .25s;
+        }
+
+        .prob-card:hover {
+            border-color: rgba(0, 193, 106, .35);
+            transform: translateY(-4px);
+        }
+
+        .prob-card:hover::before {
+            opacity: 1;
+        }
+
+        .prob-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .prob-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: .5rem;
+        }
+
+        .prob-text {
+            color: var(--muted);
+            font-size: .9rem;
+            line-height: 1.6;
+        }
+
+        /* ─── HOW IT WORKS ──────────────────────────────── */
+        #how {
+            background: linear-gradient(180deg, var(--bg) 0%, #0d1610 100%);
+            max-width: none;
+        }
+
+        #how>.inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 7rem 4rem;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0;
+            margin-top: 3.5rem;
+        }
+
+        .step {
+            padding: 2rem;
+            position: relative;
+            border-right: 1px solid var(--border);
+        }
+
+        .step:last-child {
+            border-right: none;
+        }
+
+        .step-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: rgba(0, 193, 106, .15);
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .step-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: .5rem;
+        }
+
+        .step-text {
+            color: var(--muted);
+            font-size: .88rem;
+            line-height: 1.6;
+        }
+
+        .step-arrow {
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .7rem;
+            color: var(--green);
+            z-index: 1;
+        }
+
+        .step:last-child .step-arrow {
+            display: none;
+        }
+
+        /* ─── FEATURES ──────────────────────────────────── */
+        .features-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+            margin-top: 3.5rem;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .feat-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .feat-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--green);
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .feat-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            margin-bottom: .3rem;
+        }
+
+        .feat-text {
+            color: var(--muted);
+            font-size: .9rem;
+            line-height: 1.6;
+        }
+
+        .feature-visual {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            min-height: 320px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fv-header {
+            display: flex;
+            gap: .5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .fv-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .fv-dot:nth-child(1) {
+            background: #ff5f57;
+        }
+
+        .fv-dot:nth-child(2) {
+            background: #febc2e;
+        }
+
+        .fv-dot:nth-child(3) {
+            background: #28c840;
+        }
+
+        .fv-title {
+            font-family: 'Syne', sans-serif;
+            font-size: .85rem;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .fv-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--border);
+            margin-bottom: .8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fv-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--green), var(--lime));
+            animation: fillbar 2.5s ease infinite alternate;
+        }
+
+        @keyframes fillbar {
+            from {
+                width: 30%;
+            }
+
+            to {
+                width: 95%;
+            }
+        }
+
+        .fv-bar:nth-child(3) .fv-fill {
+            animation-delay: .3s;
+        }
+
+        .fv-bar:nth-child(4) .fv-fill {
+            animation-delay: .6s;
+        }
+
+        .fv-bar:nth-child(5) .fv-fill {
+            animation-delay: .9s;
+        }
+
+        .fv-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            margin-top: 1.5rem;
+        }
+
+        .fv-tag {
+            background: rgba(0, 193, 106, .1);
+            border: 1px solid rgba(0, 193, 106, .2);
+            color: var(--green);
+            padding: .3rem .8rem;
+            border-radius: 100px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+
+        /* ─── TECH STACK ────────────────────────────────── */
+        #tech {
+            max-width: none;
+            background: var(--card);
+        }
+
+        #tech>.inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 7rem 4rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .tech-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: border-color .25s, transform .2s;
+        }
+
+        .tech-item:hover {
+            border-color: var(--green);
+            transform: translateY(-3px);
+        }
+
+        .tech-emoji {
+            font-size: 2rem;
+            margin-bottom: .6rem;
+        }
+
+        .tech-name {
+            font-family: 'Syne', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+        }
+
+        .tech-role {
+            font-size: .75rem;
+            color: var(--muted);
+            margin-top: .2rem;
+        }
+
+        /* ─── COMPANIES ─────────────────────────────────── */
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .company-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: border-color .25s, transform .2s;
+        }
+
+        .company-card:hover {
+            border-color: rgba(0, 193, 106, .35);
+            transform: translateY(-4px);
+        }
+
+        .company-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: .3rem;
+        }
+
+        .company-year {
+            font-size: .78rem;
+            color: var(--green);
+            margin-bottom: .8rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .company-desc {
+            color: var(--muted);
+            font-size: .9rem;
+            line-height: 1.6;
+        }
+
+        .company-tag {
+            display: inline-block;
+            margin-top: 1rem;
+            background: rgba(184, 240, 74, .08);
+            border: 1px solid rgba(184, 240, 74, .2);
+            color: var(--lime);
+            padding: .25rem .75rem;
+            border-radius: 100px;
+            font-size: .75rem;
+        }
+
+        /* ─── CONTACT ───────────────────────────────────── */
+        #contact {
+            max-width: none;
+            background: linear-gradient(180deg, var(--bg) 0%, #070c09 100%);
+        }
+
+        #contact>.inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 7rem 4rem;
+            text-align: center;
+        }
+
+        .contact-form {
+            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: .9rem 1.1rem;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: .95rem;
+            outline: none;
+            transition: border-color .2s;
+            width: 100%;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--green);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--muted);
+        }
+
+        .form-btn {
+            background: var(--green);
+            color: var(--bg);
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s, transform .15s;
+        }
+
+        .form-btn:hover {
+            background: var(--lime);
+            transform: translateY(-2px);
+        }
+
+        #form-success {
+            display: none;
+            color: var(--green);
+            font-weight: 600;
+            margin-top: .5rem;
+        }
+
+        /* ─── FOOTER ────────────────────────────────────── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        footer p {
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .footer-logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .footer-logo span {
+            color: var(--green);
+        }
+
+        /* ─── SCROLL REVEAL ─────────────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity .6s ease, transform .6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ─── RESPONSIVE ────────────────────────────────── */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            section {
+                padding: 5rem 1.5rem;
+            }
+
+            #how>.inner,
+            #tech>.inner,
+            #contact>.inner {
+                padding: 5rem 1.5rem;
+            }
+
+            footer {
+                padding: 2rem 1.5rem;
+            }
+
+            .features-layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .step {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .step:last-child {
+                border-bottom: none;
+            }
+
+            .step-arrow {
+                display: none;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="logo">Eco<span>Recycle</span></div>
+        <ul class="nav-links">
+            <li><a href="#problems">Problems</a></li>
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#tech">Tech Stack</a></li>
+            <li><a href="#companies">Companies</a></li>
+        </ul>
+        <a href="#contact" class="nav-cta">Schedule Pickup →</a>
+    </nav>
+
+    <!-- HERO -->
+    <div id="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-badge">E-Waste Management System — Bansal College of Engineering</div>
+        <h1>
+            Recycle Smarter,<br />
+            <span class="accent">Save the</span> <span class="accent-lime">Planet</span>
+        </h1>
+        <p class="hero-sub">
+            A digital platform for responsible e-waste disposal, real-time tracking, and connecting users with certified
+            recyclers — making sustainability effortless.
+        </p>
+        <div class="hero-btns">
+            <a href="#contact" class="btn-primary">Schedule a Pickup</a>
+            <a href="#how" class="btn-outline">See How It Works</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-num">53M+</div>
+                <div class="stat-label">Tons of E-Waste/Year</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">20%</div>
+                <div class="stat-label">Formally Recycled</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">₹2000Cr</div>
+                <div class="stat-label">Industry Target</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">100%</div>
+                <div class="stat-label">Safe Disposal Goal</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROBLEMS -->
+    <section id="problems">
+        <p class="sec-label reveal">The Challenge</p>
+        <h2 class="sec-title reveal">Why E-Waste Is a<br />Growing Crisis</h2>
+        <p class="sec-desc reveal">Improper disposal of electronics leaks toxic materials, destroys ecosystems, and
+            wastes valuable resources that could be recovered and reused.</p>
+        <div class="problems-grid">
+            <div class="prob-card reveal">
+                <div class="prob-icon">☠️</div>
+                <div class="prob-title">Toxic Chemical Pollution</div>
+                <div class="prob-text">Lead, mercury, and cadmium from discarded electronics seep into soil and water
+                    supplies, causing long-term environmental damage.</div>
+            </div>
+            <div class="prob-card reveal">
+                <div class="prob-icon">🏥</div>
+                <div class="prob-title">Serious Health Risks</div>
+                <div class="prob-text">Exposure to hazardous materials from informal e-waste handling causes
+                    neurological damage, respiratory illness, and cancer.</div>
+            </div>
+            <div class="prob-card reveal">
+                <div class="prob-icon">🔐</div>
+                <div class="prob-title">Data Security Breaches</div>
+                <div class="prob-text">Discarded devices with unwiped data expose personal and corporate information,
+                    leading to identity theft and privacy violations.</div>
+            </div>
+            <div class="prob-card reveal">
+                <div class="prob-icon">🗑️</div>
+                <div class="prob-title">Landfill Overflow</div>
+                <div class="prob-text">E-waste is the fastest-growing waste stream globally. Without proper systems,
+                    valuable resources are buried in landfills forever.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <div id="how">
+        <div class="inner">
+            <p class="sec-label reveal">The Process</p>
+            <h2 class="sec-title reveal">How Our System Works</h2>
+            <p class="sec-desc reveal">A seamless digital pipeline connecting users, collectors, and recyclers through
+                one intelligent platform.</p>
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="step-num">01</div>
+                    <div class="step-title">User Registration</div>
+                    <div class="step-text">Sign up and describe the e-waste you need to dispose of — phones, laptops,
+                        TVs, and more.</div>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="step reveal">
+                    <div class="step-num">02</div>
+                    <div class="step-title">Schedule Pickup</div>
+                    <div class="step-text">Choose a convenient time and location. Our network of certified collectors
+                        will come to you.</div>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="step reveal">
+                    <div class="step-num">03</div>
+                    <div class="step-title">Real-Time Tracking</div>
+                    <div class="step-text">Track your e-waste from pickup to recycling facility with live status updates
+                        and notifications.</div>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="step reveal">
+                    <div class="step-num">04</div>
+                    <div class="step-title">Safe Recycling</div>
+                    <div class="step-text">Certified recycling plants process the waste responsibly, recovering valuable
+                        materials and safely disposing of toxins.</div>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="step reveal">
+                    <div class="step-num">05</div>
+                    <div class="step-title">Report & Analytics</div>
+                    <div class="step-text">Get impact reports. Authorities and admins monitor flow, compliance, and
+                        environmental metrics on a live dashboard.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section id="features">
+        <p class="sec-label reveal">What We Offer</p>
+        <h2 class="sec-title reveal">Powerful Features for<br />Every Stakeholder</h2>
+        <div class="features-layout">
+            <div class="feature-list">
+                <div class="feat-item reveal">
+                    <div class="feat-dot"></div>
+                    <div>
+                        <div class="feat-title">Secure Login & Authentication</div>
+                        <div class="feat-text">Role-based access for users, collectors, recyclers, and administrators
+                            with encrypted credentials.</div>
+                    </div>
+                </div>
+                <div class="feat-item reveal">
+                    <div class="feat-dot"></div>
+                    <div>
+                        <div class="feat-title">Real-Time Tracking & Notifications</div>
+                        <div class="feat-text">Live status updates via push notifications and SMS at every stage of the
+                            recycling journey.</div>
+                    </div>
+                </div>
+                <div class="feat-item reveal">
+                    <div class="feat-dot"></div>
+                    <div>
+                        <div class="feat-title">Analytics Dashboard</div>
+                        <div class="feat-text">Visual charts and reports on collection volumes, recycling rates, and
+                            environmental impact metrics.</div>
+                    </div>
+                </div>
+                <div class="feat-item reveal">
+                    <div class="feat-dot"></div>
+                    <div>
+                        <div class="feat-title">Device Refurbishment Marketplace</div>
+                        <div class="feat-text">Buy and sell refurbished electronics at lower cost, extending product
+                            lifecycle and reducing waste.</div>
+                    </div>
+                </div>
+                <div class="feat-item reveal">
+                    <div class="feat-dot"></div>
+                    <div>
+                        <div class="feat-title">Reward System</div>
+                        <div class="feat-text">Earn points for responsible disposal. Redeem for discounts, vouchers, and
+                            exclusive offers.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="feature-visual reveal">
+                <div class="fv-header">
+                    <div class="fv-dot"></div>
+                    <div class="fv-dot"></div>
+                    <div class="fv-dot"></div>
+                </div>
+                <div class="fv-title">📊 Live Recycling Dashboard</div>
+                <div style="font-size:.75rem;color:var(--muted);margin-bottom:1.2rem;">Collection Progress — March 2025
+                </div>
+                <div
+                    style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:.4rem;">
+                    <span>Mobile Phones</span><span style="color:var(--green)">87%</span></div>
+                <div class="fv-bar">
+                    <div class="fv-fill" style="width:87%"></div>
+                </div>
+                <div
+                    style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:.4rem;">
+                    <span>Laptops & PCs</span><span style="color:var(--green)">64%</span></div>
+                <div class="fv-bar">
+                    <div class="fv-fill" style="width:64%;animation-delay:.3s"></div>
+                </div>
+                <div
+                    style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:.4rem;">
+                    <span>Televisions</span><span style="color:var(--green)">41%</span></div>
+                <div class="fv-bar">
+                    <div class="fv-fill" style="width:41%;animation-delay:.6s"></div>
+                </div>
+                <div
+                    style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:.4rem;">
+                    <span>Batteries</span><span style="color:var(--green)">93%</span></div>
+                <div class="fv-bar">
+                    <div class="fv-fill" style="width:93%;animation-delay:.9s"></div>
+                </div>
+                <div class="fv-tags">
+                    <span class="fv-tag">✓ 2,340 items collected</span>
+                    <span class="fv-tag">✓ 1.8T CO₂ saved</span>
+                    <span class="fv-tag">✓ 12 cities</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECH STACK -->
+    <div id="tech">
+        <div class="inner">
+            <p class="sec-label reveal">Built With</p>
+            <h2 class="sec-title reveal">Technology Stack</h2>
+            <p class="sec-desc reveal">Modern, scalable technologies following Agile development principles for a robust
+                and maintainable system.</p>
+            <div class="tech-grid">
+                <div class="tech-item reveal">
+                    <div class="tech-emoji">⚛️</div>
+                    <div class="tech-name">React</div>
+                    <div class="tech-role">Frontend UI</div>
+                </div>
+                <div class="tech-item reveal">
+                    <div class="tech-emoji">🎨</div>
+                    <div class="tech-name">HTML / CSS / JS</div>
+                    <div class="tech-role">Web Layer</div>
+                </div>
+                <div class="tech-item reveal">
+                    <div class="tech-emoji">🟢</div>
+                    <div class="tech-name">Node.js</div>
+                    <div class="tech-role">Backend Runtime</div>
+                </div>
+                <div class="tech-item reveal">
+                    <div class="tech-emoji">🐍</div>
+                    <div class="tech-name">Python / Django</div>
+                    <div class="tech-role">Backend Framework</div>
+                </div>
+                <div class="tech-item reveal">
+                    <div class="tech-emoji">🗄️</div>
+                    <div class="tech-name">MySQL</div>
+                    <div class="tech-role">Database</div>
+                </div>
+                <div class="tech-item reveal">
+                    <div class="tech-emoji">🔌</div>
+                    <div class="tech-name">REST APIs</div>
+                    <div class="tech-role">Communication</div>
+                </div>
+                <div class="tech-item reveal">
+                    <div class="tech-emoji">💻</div>
+                    <div class="tech-name">VS Code</div>
+                    <div class="tech-role">IDE / Editor</div>
+                </div>
+                <div class="tech-item reveal">
+                    <div class="tech-emoji">🔄</div>
+                    <div class="tech-name">Agile Model</div>
+                    <div class="tech-role">Dev Methodology</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPANIES -->
+    <section id="companies">
+        <p class="sec-label reveal">Industry Leaders</p>
+        <h2 class="sec-title reveal">Who's Already<br />Making a Difference</h2>
+        <p class="sec-desc reveal">Leading companies proving that e-waste management is not just necessary — it's a
+            massive opportunity.</p>
+        <div class="companies-grid">
+            <div class="company-card reveal">
+                <div class="company-name">Attero Recycling</div>
+                <div class="company-year">Founded 2008 · Noida, India</div>
+                <div class="company-desc">Founded by Nitin Gupta and Rohan Gupta. One of India's largest e-waste
+                    recyclers targeting ₹2,000 crore in annual revenue through expanded operations and technology-led
+                    processing.</div>
+                <span class="company-tag">🏆 Market Leader</span>
+            </div>
+            <div class="company-card reveal">
+                <div class="company-name">E-Parisaraa</div>
+                <div class="company-year">Founded 2005 · Bengaluru, India</div>
+                <div class="company-desc">India's first government-authorized e-waste recycler. Processes thousands of
+                    tons of e-waste annually with certified, environmentally responsible methods compliant with global
+                    standards.</div>
+                <span class="company-tag">🌱 Government Certified</span>
+            </div>
+            <div class="company-card reveal">
+                <div class="company-name">Karo Sambhav</div>
+                <div class="company-year">Founded 2017 · ₹40+ Crore</div>
+                <div class="company-desc">Founded by Pranshu Singhal. A Producer Responsibility Organization enabling
+                    brands to meet their Extended Producer Responsibility (EPR) obligations through a network of
+                    collection and recycling partners.</div>
+                <span class="company-tag">🔄 EPR Specialist</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <div id="contact">
+        <div class="inner">
+            <p class="sec-label reveal">Get Started</p>
+            <h2 class="sec-title reveal">Schedule Your<br />Free Pickup Today</h2>
+            <p class="sec-desc reveal" style="margin:0 auto 0 auto;text-align:center;">Fill in your details and we'll
+                arrange a certified e-waste collector to come to your location at your convenience.</p>
+            <div class="contact-form">
+                <div class="form-row reveal">
+                    <input class="form-input" type="text" placeholder="Your Name" id="f-name" />
+                    <input class="form-input" type="email" placeholder="Email Address" id="f-email" />
+                </div>
+                <input class="form-input reveal" type="text" placeholder="City / Area" id="f-city" />
+                <select class="form-input reveal" id="f-type" style="appearance:none;cursor:pointer">
+                    <option value="" disabled selected>Type of E-Waste</option>
+                    <option>Mobile Phone / Tablet</option>
+                    <option>Laptop / Desktop PC</option>
+                    <option>Television / Monitor</option>
+                    <option>Batteries / Chargers</option>
+                    <option>Kitchen Appliances</option>
+                    <option>Other Electronics</option>
+                </select>
+                <textarea class="form-textarea reveal" placeholder="Additional details about your e-waste..."
+                    id="f-msg"></textarea>
+                <button class="form-btn reveal" onclick="submitForm()">📦 Schedule Pickup →</button>
+                <p id="form-success">✅ Request submitted! We'll contact you within 24 hours.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">Eco<span>Recycle</span></div>
+        <p>Bansal College of Engineering, Mandideep · Shubham Narware & Vaishnavi Vishwakarma</p>
+        <p>© 2025 EcoRecycle. Built for a sustainable future.</p>
+    </footer>
+
+    <script>
+        // ─── SCROLL REVEAL
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // ─── FORM SUBMIT
+        function submitForm() {
+            const name = document.getElementById('f-name').value.trim();
+            const email = document.getElementById('f-email').value.trim();
+            if (!name || !email) { alert('Please fill in at least your name and email.'); return; }
+            const btn = document.querySelector('.form-btn');
+            btn.textContent = 'Submitting...';
+            btn.disabled = true;
+            setTimeout(() => {
+                document.getElementById('form-success').style.display = 'block';
+                btn.textContent = '📦 Schedule Pickup →';
+                btn.disabled = false;
+                ['f-name', 'f-email', 'f-city', 'f-type', 'f-msg'].forEach(id => document.getElementById(id).value = '');
+            }, 1200);
+        }
+
+        // ─── SMOOTH NAV HIGHLIGHT
+        const sections = document.querySelectorAll('section, #how, #tech, #contact');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
+            navLinks.forEach(a => {
+                a.style.color = a.getAttribute('href') === '#' + current ? 'var(--green)' : '';
+            });
+        });
+    </script>
+</body>
+
+</html>
